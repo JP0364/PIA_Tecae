@@ -95,3 +95,41 @@ x = linspace(0., 1., 101);
 plot(xU, yU, 'k-', 'LineWidth', 2);
 plot(xL, yL, 'k-', 'LineWidth', 2);
 axis equal; ylim([-0.5, 0.5]);
+
+
+
+
+% solve the PDE by iterative method
+iters = 0;
+while true
+    
+    % count the number of current iteration
+    iters = iters + 1;
+    
+    % backup the last result
+    stream_n = stream;
+    
+    % apply periodic BC on dividing line
+    temp = [stream(end-1, :); stream(1:2, :)];
+    tempx = [x(end-1, :); x(1:2, :)];
+    tempy = [y(end-1, :); y(1:2, :)];
+    [a, b, c] = Solve_a_b_c(tempx, tempy);
+    stream(1, 2:end-1) = SolveEq(a, b, c, temp);
+    stream(end, :) = stream(1, :);
+    
+    % apply Kutta condition 
+    % and set the value of stream function on the airfoil surface
+    stream(:, 1) = stream(1, 2);
+
+    % solve interior
+    [a, b, c] = Solve_a_b_c(x, y);
+    stream(2:end-1, 2:end-1) = SolveEq(a, b, c, stream);
+    
+    % calculate difference between current and the last result
+    err = abs(stream - stream_n);
+    
+    % adjudge whether the iteration should stop
+    if (max(err(:)) <= 1e-6)
+        break;
+    end
+end

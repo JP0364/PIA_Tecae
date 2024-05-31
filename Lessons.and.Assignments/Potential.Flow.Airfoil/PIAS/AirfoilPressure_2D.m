@@ -13,7 +13,7 @@ clc
 %% INPUTS
 U = 38;                     % input free stream velocity [m/s]
 v =U/U;                     % input free stream velocity [m/s] normalized
-alpha = -15;                % angle of attack, deg
+alpha = -20;                % angle of attack, deg
 alpha = alpha*pi/180;       % angle of attack in radians
 sx = 0.028;                 % displacement of circle center in  real axis. // velocity potential
 sy = 0    ;                 % displacement of circle center in  imaginary axis.  // stream function
@@ -27,7 +27,7 @@ beta = (alpha);
 k = -2*r*v*sin(beta);        % vortex strength
 Gamma = k/(2*pi);           % circulation 
 tol = +5e-2;                % geometric grid tolerance for flow visualization 
-[x y]= meshgrid(-2:.01:2);   % mesh or grid generation in the circle or complex z plane 
+[x y]= meshgrid(-2:.02:2);   % mesh or grid generation in the circle or complex z plane 
 z = x + i*y;               % complex z plane
 
 %% flow velocity in the complex z plane
@@ -107,4 +107,6 @@ fill(real(zair),imag(zair),'k')
 axis equal
 axis(1.5*[-1 1 -1 1])
 title('Stream line contour on mapped airfoil. ');
+
+
 
