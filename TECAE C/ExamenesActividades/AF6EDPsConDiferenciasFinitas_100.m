@@ -119,11 +119,11 @@ clear all
 close all
 clc
 
-n = 3;       % Numero de puntos en la direccion x en la malla
+n = 10;       % Numero de puntos en la direccion x en la malla
 
 Tlw = 0;     % Valor del borde inferior
-Tlf = 60;    % Valor del borde izquierdo
-Tup = 120;   % Valor del borde superior
+Tlf = 120;    % Valor del borde izquierdo
+Tup = 240;   % Valor del borde superior
 Trg = 50;    % Valor del borde derecho
 w   = 1.2;   % Factor de ponderacion de sobrerrelajacion
 err = 1;     % Valor maximo de error permitido en porcentaje
@@ -155,9 +155,10 @@ end
 M = A(2:end-1, 2:end-1);
 
 % Cálculo de flujos de calor usando diferencias finitas centradas
-[dy, dx] = gradient(M);
-flux_x = -dx; % Flujo de calor en la dirección x
-flux_y = -dy; % Flujo de calor en la dirección y
+[dy, dx] = gradient(rot90(M));
+flux_x = dx; % Flujo de calor en la dirección x
+flux_y = dy; % Flujo de calor en la dirección y
+
 
 % Grafico de los flujos de calor
 figure;
@@ -166,11 +167,11 @@ title('Flujo de calor');
 xlabel('Direccion X');
 ylabel('Direccion Y');
 
-n = 49;       % Numero de puntos en la direccion x en la malla
+n = 80;       % Numero de puntos en la direccion x en la malla
 
 Tlw = 0;     % Valor del borde inferior
-Tlf = 60;    % Valor del borde izquierdo
-Tup = 120;   % Valor del borde superior
+Tlf = 120;    % Valor del borde izquierdo
+Tup = 240;   % Valor del borde superior
 Trg = 50;    % Valor del borde derecho
 w   = 1.2;   % factor de ponderacion de sobrerrelajacion
 err = 1;     % Valor maximo de error permitido en porcentaje
@@ -199,6 +200,7 @@ T = A; % Esto se usara para calcular el flujo de calor, no es necesario para la 
 fprintf('Numero de iteraciones :%d\n', iteration);
 fprintf('Los valores de temperatura son:\n');
 M = A(2:end-1, 2:end-1)
+
 
 % Grafico de la matriz de temperatura
 figure; % Abre una nueva ventana de figura
