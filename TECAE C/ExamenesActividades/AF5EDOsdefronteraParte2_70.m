@@ -3,36 +3,40 @@ close all
 clc
 
 % Parámetros
-L = 30;
-m = 68.1;
-Cd = 0.25;
-k = 40;
-g = 9.81;
-c = 8;
-h = 0.01;
-tol = 0.5;
+% Parámetros
+L = 30; % Longitud de la cuerda (m)
+m = 68.1; % Masa del saltador (kg)
+Cd = 0.25; % Coeficiente de arrastre
+k = 40; % Constante de la cuerda (N/m)
+g = 9.81; % Aceleración debido a la gravedad (m/s^2)
+c = 8; % Coeficiente de amortiguación
+h = 0.01; % Paso de tiempo (s)
+tol = 0.5; % Tolerancia para determinar el estado estacionario (m)
 
 % valores iniciales
-x = 0;
-v = 0;
-T = 0:h:100;
-n = length(T);
+x = 0; % Posición inicial del saltador (m)
+v = 0; % Velocidad inicial del saltador (m/s)
+T = 0:h:100; % Vector de tiempo (s)
+n = length(T); % Número de elementos en el vector de tiempo
 
+% Aceleración
 % Aceleración
 a = @(x, v) g - (Cd/m) * abs(v) * v;
 
-steatyTi = 0;
-top = 10;
-bottom = -10;
-X = zeros(1,n);
-V = zeros(1,n);
-X(1) = x;
-V(1) = v;
+steatyTi = 0; % Tiempo en el que el sistema alcanza el estado estacionario
+top = 10; % Valor inicial para la posición máxima (se actualiza durante la simulación)
+bottom = -10; % Valor inicial para la posición mínima (se actualiza durante la simulación)
+X = zeros(1,n); % Vector para almacenar la posición en cada instante de tiempo
+V = zeros(1,n); % Vector para almacenar la velocidad en cada instante de tiempo
+X(1) = x; % Valor inicial de la posición
+V(1) = v; % Valor inicial de la velocidad
 
 % Runge-Kutta 4
 for ti = 2 : n
+    % Definición de la aceleración
     a = @(x, v) g - (Cd/m) * abs(v) * v - (x > L) * ((k/m) * (x - L) + (c/m) * v);
 
+    % Cálculo de los coeficientes k del método de Runge-Kutta de cuarto orden
     k1x = h * v;
     k1v = h * a(x, v);
     k2x = h * (v + 0.5*k1v);
@@ -42,10 +46,13 @@ for ti = 2 : n
     k4x = h * (v + k3v);
     k4v = h * a(x + k3x, v + k3v);
 
+    % Actualización de la posición y velocidad utilizando los coeficientes k
     x = x + (k1x + 2*k2x + 2*k3x + k4x) / 6;
     v = v + (k1v + 2*k2v + 2*k3v + k4v) / 6;
     X(ti) = x;
     V(ti) = v;
+
+    % Búsqueda de la última oscilación antes de alcanzar el estado estacionario
     if (ti >= 3 && steatyTi == 0)
         if ((X(ti) < X(ti-1)) && X(ti-1) > X(ti-2))
             top = X(ti-1);
@@ -56,6 +63,8 @@ for ti = 2 : n
             bottomTime = ti-1;
         end
     end
+
+    % Determinación del tiempo en el que se alcanza el estado estacionario
     if ((abs(top - bottom) < tol) && steatyTi == 0)
         steatyTi = ti-1;
     end
